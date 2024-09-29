@@ -1,0 +1,50 @@
+unit UfrmLiberarMemoria;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls;
+
+type
+  TForm1 = class(TForm)
+    Timer1: TTimer;
+    procedure Timer1Timer(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.dfm}
+procedure LiberarMemoria;
+begin
+  if Win32Platform = VER_PLATFORM_WIN32_NT then
+    SetProcessWorkingSetSize(GetCurrentProcess, $FFFFFFFF, $FFFFFFFF);
+end;
+
+procedure Optimizar_memoria;
+var
+  MainHandle : THandle;
+begin
+  try
+    MainHandle := OpenProcess(PROCESS_ALL_ACCESS, false, GetCurrentProcessID);
+    SetProcessWorkingSetSize(MainHandle,DWORD(-1),DWORD(-1));
+  finally
+    CloseHandle(MainHandle);
+  end;
+end;
+
+procedure TForm1.Timer1Timer(Sender: TObject);
+begin
+  LiberarMemoria;
+  Optimizar_memoria;
+  Exit;
+end;
+
+end.
